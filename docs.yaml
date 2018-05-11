@@ -10,24 +10,9 @@ info:
   description: Global Unique ID Broker part of the NIH Data Commons initiative
   termsOfService: https://www.elsevier.com/legal/elsevier-website-terms-and-conditions
   contact:
-    - name: Elsevier
-      url: https://www.elsevier.com/
-      x-role: resonposible organization
-    - name: Gabriel Oscares
-      email: g.oscares@elsevier.com
-      x-role: responsible developer
-    - name: Abhinav Rohatgi
-      email: a.rohatgi@elsevier.com
-      x-role: responsible developer
-    - name: Anita Dewaard
-      email: a.dewaard@elsevier.com
-      x-role: contributor
-    - name: Gareth Harvey
-      email: g.harvey@elsevier.com
-      x-role: contributor
-    - name: Paul Groth
-      email: p.groth@elsevier.com
-      x-role: contributor
+    name: Elsevier
+    url: https://www.elsevier.com/
+    x-role: resonposible organization
   x-accessRestriction: none
   x-implementationLanguage: Java
   license:
