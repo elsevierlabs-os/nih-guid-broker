@@ -12,7 +12,7 @@ info:
   contact:
     name: Elsevier
     url: https://www.elsevier.com/
-    x-role: resonposible organization
+    x-role: responsible organization
   x-accessRestriction: none
   x-implementationLanguage: Java
   license:
