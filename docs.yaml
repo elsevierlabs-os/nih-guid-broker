@@ -1,0 +1,426 @@
+openapi: 3.0.0
+servers:
+  - url: http://nih-guid-broker-elb-1813020435.eu-west-1.elb.amazonaws.com/
+    x-location: EU
+    x-maturity: development
+
+info:
+  version: '0.1'
+  title: GUID Broker
+  description: Global Unique ID Broker part of the NIH Data Commons initiative
+  termsOfService: https://www.elsevier.com/legal/elsevier-website-terms-and-conditions
+  contact:
+    - name: Elsevier
+      url: https://www.elsevier.com/
+      x-role: resonposible organization
+    - name: Gabriel Oscares
+      email: g.oscares@elsevier.com
+      x-role: responsible developer
+    - name: Abhinav Rohatgi
+      email: a.rohatgi@elsevier.com
+      x-role: responsible developer
+    - name: Anita Dewaard
+      email: a.dewaard@elsevier.com
+      x-role: contributor
+    - name: Gareth Harvey
+      email: g.harvey@elsevier.com
+      x-role: contributor
+    - name: Paul Groth
+      email: p.groth@elsevier.com
+      x-role: contributor
+  x-accessRestriction: none
+  x-implementationLanguage: Java
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+tags:
+  - name: EZID
+    description: EZID Broker
+  - name: DataCite
+    description: DataCite Broker
+paths:
+  /broker/doi:
+    post:
+      tags:
+        - DataCite
+      summary: >-
+        Will create a new DOI, but instead of supplying a complete identifier,
+        the client specifies only a partial namespace (shoulder).
+      description: ''
+      operationId: mintDOI
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/EnrichedDigitalObject'
+        '400':
+          description: Bad request
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+      requestBody:
+        $ref: '#/components/requestBodies/mintDOIBody'
+      x-accessRestriction: limited
+  '/broker/doi/{identifier}':
+    get:
+      tags:
+        - DataCite
+      summary: Returns metadata for a given DOI
+      description: ''
+      operationId: retriveDOI
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: .+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/EnrichedDigitalObject'
+        '404':
+          description: The resource you were trying to reach is not found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+      x-accessRestriction: none
+    put:
+      tags:
+        - DataCite
+      summary: >-
+        Will create a new DOI if the specified DOI doesn’t exist. Will not
+        update an existing DOI, but will return an error.
+      description: ''
+      operationId: createDOI
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: .+
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/EnrichedDigitalObject'
+        '400':
+          description: Bad request
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+        '404':
+          description: The resource you were trying to reach is not found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+      requestBody:
+        $ref: '#/components/requestBodies/mintDOIBody'
+      x-accessRestriction: limited
+    delete:
+      tags:
+        - DataCite
+      summary: 'Delete a doi, note that only reserved identifiers may be deleted'
+      description: ''
+      operationId: deleteDOI
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: .+
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request
+        '500':
+          description: Internal Server Error
+      x-accessRestriction: limited
+    patch:
+      tags:
+        - DataCite
+      summary: >-
+        Will create a new DOI if the specified DOI doesn’t exist. Will not
+        update an existing DOI, but will return an error.
+      description: ''
+      operationId: updateDOI
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: .+
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/EnrichedDigitalObject'
+        '400':
+          description: Bad request
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+        '404':
+          description: The resource you were trying to reach is not found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+      requestBody:
+        $ref: '#/components/requestBodies/mintDOIBody'
+      x-accessRestriction: limited
+  /broker/minid:
+    post:
+      tags:
+        - EZID
+      summary: Create an ark
+      description: ''
+      operationId: mintARK
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/EnrichedDigitalObject'
+        '400':
+          description: Bad request
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+      requestBody:
+        $ref: '#/components/requestBodies/mintDOIBody'
+      x-accessRestriction: limited
+  '/broker/minid/{identifier}':
+    get:
+      tags:
+        - EZID
+      summary: Retrieve an ark
+      description: ''
+      operationId: retriveARK
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: .+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/EnrichedDigitalObject'
+        '404':
+          description: The resource you were trying to reach is not found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+      x-accessRestriction: none
+    put:
+      tags:
+        - EZID
+      summary: Creates an ark
+      description: ''
+      operationId: createARK
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: .+
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/EnrichedDigitalObject'
+        '400':
+          description: Bad request
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+        '404':
+          description: The resource you were trying to reach is not found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+      requestBody:
+        $ref: '#/components/requestBodies/mintDOIBody'
+      x-accessRestriction: limited
+    delete:
+      tags:
+        - EZID
+      summary: Delete an ark
+      description: ''
+      operationId: deleteARK
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: .+
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request
+        '500':
+          description: Internal Server Error
+      x-accessRestriction: limited
+    patch:
+      tags:
+        - EZID
+      summary: Updates an ark
+      description: ''
+      operationId: updateARK
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: .+
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/EnrichedDigitalObject'
+        '400':
+          description: Bad request
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+        '404':
+          description: The resource you were trying to reach is not found
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/BrokerResponse'
+      requestBody:
+        $ref: '#/components/requestBodies/mintDOIBody'
+      x-accessRestriction: limited
+components:
+  requestBodies:
+    mintDOIBody:
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            type: string
+  schemas:
+    BrokerResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        statusCode:
+          type: integer
+          format: int32
+    EnrichedDigitalObject:
+      type: object
+      properties:
+        digitalObject:
+          $ref: '#/components/schemas/DigitalObject'
+        fairScore:
+          type: number
+          format: double
+    DigitalObject:
+      type: object
+      properties:
+        name:
+          type: string
+        identifier:
+          type: string
+        '@id':
+          type: string
+        '@context':
+          type: string
+          readOnly: true
+        '@type':
+          type: string
+          readOnly: true
+x-externalResources:
+  - x-url: https://www.datacite.org/
+    x-type: website
+    x-description: Authority used to handle DOIs
+  - x-url: https://ezid.cdlib.org/
+    x-type: website
+    x-description: Authority used to handle ARKs
