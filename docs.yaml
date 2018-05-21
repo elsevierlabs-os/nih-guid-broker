@@ -24,6 +24,8 @@ tags:
     description: EZID Broker
   - name: DataCite
     description: DataCite Broker
+  - name: NIHdatacommons
+    description: Part of the NIH data commons initiative
 paths:
   /broker/doi:
     post:
