@@ -3,9 +3,8 @@ servers:
   - url: http://nih-guid-broker-elb-1813020435.eu-west-1.elb.amazonaws.com/
     x-location: EU
     x-maturity: development
-
 info:
-  version: '0.1'
+  version: '0.2'
   title: GUID Broker
   description: Global Unique ID Broker part of the NIH Data Commons initiative
   termsOfService: https://www.elsevier.com/legal/elsevier-website-terms-and-conditions
@@ -18,12 +17,11 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-
 tags:
-  - name: EZID
-    description: EZID Broker
   - name: DataCite
     description: DataCite Broker
+  - name: EZID
+    description: EZID Broker
 paths:
   /broker/doi:
     post:
@@ -40,7 +38,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/EnrichedDigitalObject'
+                $ref: '#/components/schemas/DigitalObject'
         '400':
           description: Bad request
           content:
@@ -76,7 +74,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/EnrichedDigitalObject'
+                $ref: '#/components/schemas/DigitalObject'
         '404':
           description: The resource you were trying to reach is not found
           content:
@@ -111,7 +109,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/EnrichedDigitalObject'
+                $ref: '#/components/schemas/DigitalObject'
         '400':
           description: Bad request
           content:
@@ -175,7 +173,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/EnrichedDigitalObject'
+                $ref: '#/components/schemas/DigitalObject'
         '400':
           description: Bad request
           content:
@@ -210,7 +208,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/EnrichedDigitalObject'
+                $ref: '#/components/schemas/DigitalObject'
         '400':
           description: Bad request
           content:
@@ -225,7 +223,7 @@ paths:
                 $ref: '#/components/schemas/BrokerResponse'
       requestBody:
         $ref: '#/components/requestBodies/mintDOIBody'
-      x-accessRestriction: limited
+      x-accessRestriction: none
   '/broker/minid/{identifier}':
     get:
       tags:
@@ -246,7 +244,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/EnrichedDigitalObject'
+                $ref: '#/components/schemas/DigitalObject'
         '404':
           description: The resource you were trying to reach is not found
           content:
@@ -259,7 +257,7 @@ paths:
             application/json;charset=UTF-8:
               schema:
                 $ref: '#/components/schemas/BrokerResponse'
-      x-accessRestriction: none
+      x-accessRestriction: limited
     put:
       tags:
         - EZID
@@ -279,7 +277,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/EnrichedDigitalObject'
+                $ref: '#/components/schemas/DigitalObject'
         '400':
           description: Bad request
           content:
@@ -341,7 +339,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/EnrichedDigitalObject'
+                $ref: '#/components/schemas/DigitalObject'
         '400':
           description: Bad request
           content:
@@ -371,6 +369,19 @@ components:
           schema:
             type: string
   schemas:
+    Wrapper:
+      type: object
+      properties:
+        name:
+          type: string
+        license:
+          type: string
+        contributors:
+          type: array
+          items:
+            type: string
+        language:
+          $ref: '#/components/schemas/Language'
     BrokerResponse:
       type: object
       properties:
@@ -379,29 +390,64 @@ components:
         statusCode:
           type: integer
           format: int32
-    EnrichedDigitalObject:
+    Language:
       type: object
       properties:
-        digitalObject:
-          $ref: '#/components/schemas/DigitalObject'
-        fairScore:
-          type: number
-          format: double
-    DigitalObject:
+        version:
+          type: string
+        name:
+          type: string
+    Toolkit:
       type: object
       properties:
         name:
           type: string
+        version:
+          type: string
+        license:
+          type: string
+        author:
+          type: string
+    DigitalObject:
+      type: object
+      properties:
         identifier:
+          type: object
+        url:
+          type: object
+        contentUrl:
+          type: object
+        includedInDataCatalog:
+          type: object
+          additionalProperties:
+            type: object
+        name:
           type: string
-        '@id':
+        toolAuthor:
           type: string
+        categories:
+          type: array
+          items:
+            type: string
+        toolkit:
+          $ref: '#/components/schemas/Toolkit'
+        wrapper:
+          $ref: '#/components/schemas/Wrapper'
+        author:
+          type: object
         '@context':
           type: string
           readOnly: true
+        '@id':
+          type: string
         '@type':
           type: string
           readOnly: true
+          enum:
+            - DATASET
+            - SOFTWARE_SOURCE_CODE
+            - CREATIVE_WORK
+            - COLLECTION
 x-externalResources:
   - x-url: https://www.datacite.org/
     x-type: website
